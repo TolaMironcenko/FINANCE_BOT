@@ -11,7 +11,9 @@ ru = {
 /add или + - добавить доход
 /rm или - - добавить расход
         ''',
-    'error404_message': 'Я не могу это сделать.'
+    'error404_message': 'Я не могу это сделать.',
+    'erradd': 'Используйте /add [сумма] или + [сумма]',
+    'errrm': 'Используйте /rm [сумма] или - [сумма]'
 }
 
 en = {
@@ -25,5 +27,7 @@ Hi i am finance bot and i can do this:
 /add или + - add incom
 /rm или - - add consuption
         ''',
-    'error404_message': 'I can\'t do this.'
+    'error404_message': 'I can\'t do this.',
+    'erradd': 'Use /add [sum] or + [sum]',
+    'errrm': 'Use /rm [sum] or - [sum]'
 }

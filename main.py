@@ -2,13 +2,15 @@ from termcolor import cprint
 from bot import bot
 import locale
 from changelocale import change_locale
-from database.models import User
+from database.models import User, Transaction
 
 
+# функция ограничения количества знаков после запятой
 def to_fixed(num_obj, digits=0):
     return f"{num_obj:.{digits}f}"
 
 
+# основной обработчик для бота
 def main_bot(messages):
     for message in messages:
         if message.text.split(' ')[0] == '/start' or message.text.split(' ')[0] == '/help':
@@ -28,27 +30,37 @@ def main_bot(messages):
             if len(message.text.split(' ')) < 2:
                 mes = None
                 if locale.LOCALE == 'ru':
-                    mes = 'Используйте /add [сумма] или + [сумма]'
+                    mes = locale.ru['erradd']
                 elif locale.LOCALE == 'en':
-                    mes = 'Use /add [sum] or + [sum]'
+                    mes = locale.en['erradd']
                 bot.send_message(message.chat.id, mes)
             else:
                 user = User.get(username=message.chat.id)
                 user.balance += float(message.text.split(' ')[1])
                 user.save()
+                Transaction.create(
+                    sum=int(message.text.split(' ')[1]),
+                    type='incom',
+                    user=User.get(username=message.chat.id)
+                )
                 bot.send_message(message.chat.id, to_fixed(user.balance, 2))
         elif message.text.split(' ')[0] == '/rm' or message.text.split(' ')[0] == '-':
             if len(message.text.split(' ')) < 2:
                 mes = None
                 if locale.LOCALE == 'ru':
-                    mes = 'Используйте /rm [сумма] или - [сумма]'
+                    mes = locale.ru['errrm']
                 elif locale.LOCALE == 'en':
-                    mes = 'Use /rm [sum] or - [sum]'
+                    mes = locale.en['errrm']
                 bot.send_message(message.chat.id, mes)
             else:
                 user = User.get(username=message.chat.id)
                 user.balance -= float(message.text.split(' ')[1])
                 user.save()
+                Transaction.create(
+                    sum=int(message.text.split(' ')[1]),
+                    type='consuption',
+                    user=User.get(username=message.chat.id)
+                )
                 bot.send_message(message.chat.id, to_fixed(user.balance, 2))
         else:
             mes = None
