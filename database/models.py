@@ -32,4 +32,5 @@ class Transaction(BaseModel):
         table_name = 'Transaction'
 
 
+# создаю таблицы
 conn.create_tables([User, Transaction])
