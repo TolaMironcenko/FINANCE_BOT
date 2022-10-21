@@ -26,7 +26,9 @@ class Transaction(BaseModel):
     type = CharField(column_name='TransactionType', max_length=10, null=False, default='incom')
     sum = FloatField(column_name='TransactionSum', null=False, default=0)
     user = ForeignKeyField(User, unique=False)
-    date = DateField(column_name='Date', default=datetime.datetime.today())
+    year = CharField(column_name='Year', max_length=10, default=datetime.datetime.now().strftime("%Y"))
+    month = CharField(column_name='month', max_length=10, default=datetime.datetime.now().strftime('%m'))
+    day = CharField(column_name='day', max_length=10, default=datetime.datetime.now().strftime('%d'))
     time = TimeField(column_name='time', default=datetime.datetime.now())
     category = TextField(column_name='category', default='None category')
 
