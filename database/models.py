@@ -28,10 +28,17 @@ class Transaction(BaseModel):
     user = ForeignKeyField(User, unique=False)
     date = DateField(column_name='Date', default=datetime.datetime.today())
     time = TimeField(column_name='time', default=datetime.datetime.now())
-    category = TextField(column_name='category', default='none category')
+    category = TextField(column_name='category', default='None category')
 
     class Meta:
         table_name = 'Transaction'
+
+
+class Check(BaseModel):
+    id = AutoField(column_name='id')
+    name = CharField(column_name='name', max_length=50, null=False, default='check')
+    balance = FloatField(column_name='balance', null=False, default=0)
+    user = ForeignKeyField(User, unique=False)
 
 
 # создаю таблицы

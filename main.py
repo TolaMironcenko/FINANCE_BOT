@@ -1,10 +1,10 @@
 import datetime
-
 from termcolor import cprint
 from bot import bot
 import locales
 from changelocale import change_locale
 from database.models import User, Transaction
+from currencyes import currensyes
 
 
 # функция ограничения количества знаков после запятой
@@ -32,7 +32,7 @@ def main_bot(messages):
                 mes = 'Баланс: '
             elif locales.LOCALE == 'en':
                 mes = 'Balance: '
-            mes += to_fixed(user.balance, 2) + '₽'
+            mes += to_fixed(user.balance, 2) + currensyes['ru-ruble']
             bot.send_message(message.chat.id, mes)
         elif message.text.split(' ')[0] == '/add' or message.text.split(' ')[0] == '+':
             if len(message.text.split(' ')) < 2:
@@ -59,7 +59,7 @@ def main_bot(messages):
                         type='incom',
                         user=User.get(username=message.chat.id)
                     )
-                bot.send_message(message.chat.id, to_fixed(user.balance, 2) + '₽')
+                bot.send_message(message.chat.id, to_fixed(user.balance, 2) + currensyes['ru-ruble'])
         elif message.text.split(' ')[0] == '/rm' or message.text.split(' ')[0] == '-':
             if len(message.text.split(' ')) < 2:
                 mes = None
@@ -85,7 +85,7 @@ def main_bot(messages):
                         type='consuption',
                         user=User.get(username=message.chat.id)
                     )
-                bot.send_message(message.chat.id, to_fixed(user.balance, 2) + '₽')
+                bot.send_message(message.chat.id, to_fixed(user.balance, 2) + currensyes['ru-ruble'])
         elif message.text.split(' ')[0] == '/addtoday':
             transactions = Transaction.select().where(
                 Transaction.type == 'incom',
@@ -105,8 +105,8 @@ def main_bot(messages):
                     mes += 'No incomes today'
             for i in transactions:
                 mes += '-------------------------------------\n'
-                mes += str(iteration) + '  ||  +' + str(i.sum) + '₽  ||  ' + i.category + '  ||  ' + str(i.date) \
-                    + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
+                mes += str(iteration) + '  ||  +' + str(i.sum) + currensyes['ru-ruble'] + '  ||  ' + i.category \
+                    + '  ||  ' + str(i.date) + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
                 iteration += 1
             mes += '-------------------------------------\n'
             bot.send_message(message.chat.id, mes)
@@ -129,8 +129,8 @@ def main_bot(messages):
                     mes += 'No consuptions today'
             for i in transactions:
                 mes += '-------------------------------------\n'
-                mes += str(iteration) + '  ||  -' + str(i.sum) + '₽  ||  ' + i.category + '  ||  ' + str(i.date) \
-                    + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
+                mes += str(iteration) + '  ||  -' + str(i.sum) + currensyes['ru-ruble'] + '  ||  ' + i.category \
+                    + '  ||  ' + str(i.date) + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
                 iteration += 1
             mes += '-------------------------------------\n'
             bot.send_message(message.chat.id, mes)
@@ -152,8 +152,8 @@ def main_bot(messages):
                     mes += 'No consuptions for all time'
             for i in transactions:
                 mes += '-------------------------------------\n'
-                mes += str(iteration) + '  ||  -' + str(i.sum) + '+  ||  ' + i.category + '  ||  ' + str(i.date) \
-                    + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
+                mes += str(iteration) + '  ||  -' + str(i.sum) + currensyes['ru-ruble'] + '  ||  ' + i.category \
+                    + '  ||  ' + str(i.date) + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
                 iteration += 1
             mes += '-------------------------------------\n'
             bot.send_message(message.chat.id, mes)
@@ -175,8 +175,8 @@ def main_bot(messages):
                     mes += 'No incomes for all time'
             for i in transactions:
                 mes += '-------------------------------------\n'
-                mes += str(iteration) + '  ||  +' + str(i.sum) + '₽  ||  ' + i.category + '  ||  ' + str(i.date) \
-                    + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
+                mes += str(iteration) + '  ||  +' + str(i.sum) + currensyes['ru-ruble'] + '  ||  ' + i.category \
+                    + '  ||  ' + str(i.date) + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
                 iteration += 1
             mes += '-------------------------------------\n'
             bot.send_message(message.chat.id, mes)
@@ -200,8 +200,8 @@ def main_bot(messages):
             for i in transactions:
                 if str(i.date).split('-')[1] == datetime.datetime.today().strftime('%m'):
                     mes += '-------------------------------------\n'
-                    mes += str(iteration) + '  ||  -' + str(i.sum) + '₽  ||  ' + i.category + '  ||  ' + str(i.date) \
-                        + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
+                    mes += str(iteration) + '  ||  -' + str(i.sum) + currensyes['ru-ruble'] + '  ||  ' + i.category \
+                        + '  ||  ' + str(i.date) + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
                     iteration += 1
             mes += '-------------------------------------\n'
             bot.send_message(message.chat.id, mes)
@@ -225,8 +225,8 @@ def main_bot(messages):
             for i in transactions:
                 if str(i.date).split('-')[1] == datetime.datetime.today().strftime('%m'):
                     mes += '-------------------------------------\n'
-                    mes += str(iteration) + '  ||  +' + str(i.sum) + '₽  ||  ' + i.category + '  ||  ' + str(i.date) \
-                        + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
+                    mes += str(iteration) + '  ||  +' + str(i.sum) + currensyes['ru-ruble'] + '  ||  ' + i.category \
+                        + '  ||  ' + str(i.date) + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
                     iteration += 1
             mes += '-------------------------------------\n'
             bot.send_message(message.chat.id, mes)
