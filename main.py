@@ -32,7 +32,7 @@ def main_bot(messages):
                 mes = 'Баланс: '
             elif locales.LOCALE == 'en':
                 mes = 'Balance: '
-            mes += to_fixed(user.balance, 2)
+            mes += to_fixed(user.balance, 2) + '₽'
             bot.send_message(message.chat.id, mes)
         elif message.text.split(' ')[0] == '/add' or message.text.split(' ')[0] == '+':
             if len(message.text.split(' ')) < 2:
@@ -59,7 +59,7 @@ def main_bot(messages):
                         type='incom',
                         user=User.get(username=message.chat.id)
                     )
-                bot.send_message(message.chat.id, to_fixed(user.balance, 2))
+                bot.send_message(message.chat.id, to_fixed(user.balance, 2) + '₽')
         elif message.text.split(' ')[0] == '/rm' or message.text.split(' ')[0] == '-':
             if len(message.text.split(' ')) < 2:
                 mes = None
@@ -85,7 +85,7 @@ def main_bot(messages):
                         type='consuption',
                         user=User.get(username=message.chat.id)
                     )
-                bot.send_message(message.chat.id, to_fixed(user.balance, 2))
+                bot.send_message(message.chat.id, to_fixed(user.balance, 2) + '₽')
         elif message.text.split(' ')[0] == '/addtoday':
             transactions = Transaction.select().where(
                 Transaction.type == 'incom',
@@ -98,10 +98,17 @@ def main_bot(messages):
             elif locales.LOCALE == 'en':
                 mes = 'Your incomes today:\n\n'
             iteration = 1
+            if len(transactions) == 0:
+                if locales.LOCALE == 'ru':
+                    mes += 'Нет доходов за сегодня'
+                elif locales.LOCALE == 'en':
+                    mes += 'No incomes today'
             for i in transactions:
-                mes += str(iteration) + '. 􀅼' + str(i.sum) + '􁑆   ' + i.category + '\n\n'
+                mes += '-------------------------------------\n'
+                mes += str(iteration) + '  ||  +' + str(i.sum) + '₽  ||  ' + i.category + '  ||  ' + str(i.date) \
+                    + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
                 iteration += 1
-
+            mes += '-------------------------------------\n'
             bot.send_message(message.chat.id, mes)
         elif message.text.split(' ')[0] == '/rmtoday':
             transactions = Transaction.select().where(
@@ -115,10 +122,17 @@ def main_bot(messages):
             elif locales.LOCALE == 'en':
                 mes = 'Your consuptions today:\n\n'
             iteration = 1
+            if len(transactions) == 0:
+                if locales.LOCALE == 'ru':
+                    mes += 'Нет расходов за сегодня'
+                elif locales.LOCALE == 'en':
+                    mes += 'No consuptions today'
             for i in transactions:
-                mes += str(iteration) + '. 􀅽' + str(i.sum) + '􁑆   ' + i.category + '\n\n'
+                mes += '-------------------------------------\n'
+                mes += str(iteration) + '  ||  -' + str(i.sum) + '₽  ||  ' + i.category + '  ||  ' + str(i.date) \
+                    + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
                 iteration += 1
-
+            mes += '-------------------------------------\n'
             bot.send_message(message.chat.id, mes)
         elif message.text.split(' ')[0] == '/rmall':
             transactions = Transaction.select().where(
@@ -131,10 +145,17 @@ def main_bot(messages):
             elif locales.LOCALE == 'en':
                 mes = 'Your all consuptions:\n\n'
             iteration = 1
+            if len(transactions) == 0:
+                if locales.LOCALE == 'ru':
+                    mes += 'Нет расходов за все время'
+                elif locales.LOCALE == 'en':
+                    mes += 'No consuptions for all time'
             for i in transactions:
-                mes += str(iteration) + '. 􀅽' + str(i.sum) + '􁑆   ' + i.category + '\n\n'
+                mes += '-------------------------------------\n'
+                mes += str(iteration) + '  ||  -' + str(i.sum) + '+  ||  ' + i.category + '  ||  ' + str(i.date) \
+                    + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
                 iteration += 1
-
+            mes += '-------------------------------------\n'
             bot.send_message(message.chat.id, mes)
         elif message.text.split(' ')[0] == '/addall':
             transactions = Transaction.select().where(
@@ -147,11 +168,70 @@ def main_bot(messages):
             elif locales.LOCALE == 'en':
                 mes = 'Your all incomes:\n\n'
             iteration = 1
+            if len(transactions) == 0:
+                if locales.LOCALE == 'ru':
+                    mes += 'Нет доходов за все время'
+                elif locales.LOCALE == 'en':
+                    mes += 'No incomes for all time'
             for i in transactions:
-                mes += str(iteration) + '. 􀅼' + str(i.sum) + '􁑆   ' + i.category + '\n\n'
+                mes += '-------------------------------------\n'
+                mes += str(iteration) + '  ||  +' + str(i.sum) + '₽  ||  ' + i.category + '  ||  ' + str(i.date) \
+                    + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
                 iteration += 1
-
+            mes += '-------------------------------------\n'
             bot.send_message(message.chat.id, mes)
+        elif message.text.split(' ')[0] == '/rmmonth':
+            transactions = Transaction.select().where(
+                Transaction.user == User.get(username=message.chat.id),
+                Transaction.type == 'consuption'
+            )
+            mes = ''
+            if locales.LOCALE == 'ru':
+                mes = 'Ваши расходы за этот месяц:\n\n'
+            elif locales.LOCALE == 'en':
+                mes = 'Your consuptions for this month:\n\n'
+            iteration = 1
+            if len(transactions) == 0:
+                if locales.LOCALE == 'ru':
+                    mes += 'Нет расходов за этот месяц\n'
+                elif locales.LOCALE == 'en':
+                    mes += 'No consuptions for this month\n'
+
+            for i in transactions:
+                if str(i.date).split('-')[1] == datetime.datetime.today().strftime('%m'):
+                    mes += '-------------------------------------\n'
+                    mes += str(iteration) + '  ||  -' + str(i.sum) + '₽  ||  ' + i.category + '  ||  ' + str(i.date) \
+                        + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
+                    iteration += 1
+            mes += '-------------------------------------\n'
+            bot.send_message(message.chat.id, mes)
+        elif message.text.split(' ')[0] == '/addmonth':
+            transactions = Transaction.select().where(
+                Transaction.user == User.get(username=message.chat.id),
+                Transaction.type == 'incom'
+            )
+            mes = ''
+            if locales.LOCALE == 'ru':
+                mes = 'Ваши доходы за этот месяц:\n\n'
+            elif locales.LOCALE == 'en':
+                mes = 'Your incomes for this month:\n\n'
+            iteration = 1
+            if len(transactions) == 0:
+                if locales.LOCALE == 'ru':
+                    mes += 'Нет доходов за этот месяц\n'
+                elif locales.LOCALE == 'en':
+                    mes += 'No incomes for this month\n'
+
+            for i in transactions:
+                if str(i.date).split('-')[1] == datetime.datetime.today().strftime('%m'):
+                    mes += '-------------------------------------\n'
+                    mes += str(iteration) + '  ||  +' + str(i.sum) + '₽  ||  ' + i.category + '  ||  ' + str(i.date) \
+                        + '  ||  ' + i.time.strftime('%H:%M:%S') + '  ||\n'
+                    iteration += 1
+            mes += '-------------------------------------\n'
+            bot.send_message(message.chat.id, mes)
+        elif message.text.split(' ')[0] == '/analysismonth':
+            bot.send_message(message.chat.id, 'pass')
         else:
             mes = None
             if locales.LOCALE == 'ru':

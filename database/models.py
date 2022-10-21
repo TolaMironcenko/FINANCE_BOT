@@ -27,6 +27,7 @@ class Transaction(BaseModel):
     sum = FloatField(column_name='TransactionSum', null=False, default=0)
     user = ForeignKeyField(User, unique=False)
     date = DateField(column_name='Date', default=datetime.datetime.today())
+    time = TimeField(column_name='time', default=datetime.datetime.now())
     category = TextField(column_name='category', default='none category')
 
     class Meta:
