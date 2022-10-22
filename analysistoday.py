@@ -1,17 +1,18 @@
-import currencyes
 from bot import bot
+from database.models import Transaction, User
 import matplotlib.pyplot as plt
-from database.models import User, Transaction
-import datetime
 import locales
+import datetime
+import currencyes
+from analysismonth import have_in_vals
 
 
-# функция для обработки аналитики и построения диаграмм
-def analysis_month(message):
+def analysis_today(message):
     transactions = Transaction.select().where(
         Transaction.user == User.get(username=message.chat.id),
         Transaction.month == datetime.datetime.today().strftime('%m'),
-        Transaction.year == datetime.datetime.today().strftime('%Y')
+        Transaction.year == datetime.datetime.today().strftime('%Y'),
+        Transaction.day == datetime.datetime.today().strftime('%d')
     )
     incomes = 0
     consuptions = 0
@@ -23,9 +24,9 @@ def analysis_month(message):
     mes = ''
     if len(transactions) == 0:
         if locales.LOCALE == 'ru':
-            mes += 'Нет транзакций за этот месяц\n'
+            mes += 'Нет транзакций за сегодня\n'
         elif locales.LOCALE == 'en':
-            mes += 'No transactions for this month\n'
+            mes += 'No transactions today\n'
         bot.send_message(message.chat.id, mes)
     else:
         vals = [incomes, consuptions]
@@ -39,18 +40,19 @@ def analysis_month(message):
         exp = (0.1, 0)
         plt.pie(vals, labels=labels, explode=exp, wedgeprops=dict(width=0.5))
         plt.legend()
-        plt.savefig('diagrams/month/diagramallmonth.png')
+        plt.savefig('diagrams/today/diagramalltoday.png')
         mes = labels[0] + ' : +' + str(vals[0]) + '\n' + labels[1] + ' : -' + str(vals[1]) + '\n'
-        with open('diagrams/month/diagramallmonth.png', 'rb') as diagram:
+        with open('diagrams/today/diagramalltoday.png', 'rb') as diagram:
             bot.send_photo(message.chat.id, diagram)
             bot.send_message(message.chat.id, mes)
 
 
-def analysis_month_rm(message):
+def analysis_today_rm(message):
     transactions = Transaction.select().where(
         Transaction.user == User.get(username=message.chat.id),
         Transaction.month == datetime.datetime.now().strftime('%m'),
         Transaction.year == datetime.datetime.today().strftime('%Y'),
+        Transaction.day == datetime.datetime.today().strftime('%d'),
         Transaction.type == 'consuption'
     )
     vals = []
@@ -62,13 +64,12 @@ def analysis_month_rm(message):
         else:
             labels.append(i.category)
             vals.append(i.sum)
-
     mes = ''
     if len(transactions) == 0:
         if locales.LOCALE == 'ru':
-            mes += 'Нет расходов за этот месяц\n'
+            mes += 'Нет расходов за сегодня\n'
         elif locales.LOCALE == 'en':
-            mes += 'No consuptions for this month\n'
+            mes += 'No сonsuptions today\n'
         bot.send_message(message.chat.id, mes)
     else:
         exp = []
@@ -77,7 +78,7 @@ def analysis_month_rm(message):
 
         plt.pie(vals, labels=labels, explode=exp, wedgeprops=dict(width=0.5))
         plt.legend()
-        plt.savefig('diagrams/month/rmanalysismonth.png')
+        plt.savefig('diagrams/today/rmanalysistoday.png')
 
         mes = ''
         pos = 0
@@ -85,25 +86,17 @@ def analysis_month_rm(message):
             mes += i + ' : -' + str(vals[pos]) + currencyes.currensyes['ru-ruble'] + '\n'
             pos += 1
 
-        with open('diagrams/month/rmanalysismonth.png', 'rb') as diagram:
+        with open('diagrams/today/rmanalysistoday.png', 'rb') as diagram:
             bot.send_photo(message.chat.id, diagram)
             bot.send_message(message.chat.id, mes)
 
 
-def have_in_vals(category, labels):
-    pos = 0
-    for i in labels:
-        if i == category:
-            return True, pos
-        pos += 1
-    return False, pos
-
-
-def analysis_month_add(message):
+def analysis_today_add(message):
     transactions = Transaction.select().where(
         Transaction.user == User.get(username=message.chat.id),
         Transaction.month == datetime.datetime.now().strftime('%m'),
         Transaction.year == datetime.datetime.today().strftime('%Y'),
+        Transaction.day == datetime.datetime.today().strftime('%d'),
         Transaction.type == 'incom'
     )
     vals = []
@@ -118,9 +111,9 @@ def analysis_month_add(message):
     mes = ''
     if len(transactions) == 0:
         if locales.LOCALE == 'ru':
-            mes += 'Нет доходов за этот месяц\n'
+            mes += 'Нет доходов за сегодня\n'
         elif locales.LOCALE == 'en':
-            mes += 'No incomes for this month\n'
+            mes += 'No incomes today\n'
         bot.send_message(message.chat.id, mes)
     else:
         exp = []
@@ -129,7 +122,7 @@ def analysis_month_add(message):
 
         plt.pie(vals, labels=labels, explode=exp, wedgeprops=dict(width=0.5))
         plt.legend()
-        plt.savefig('diagrams/month/addanalysismonth.png')
+        plt.savefig('diagrams/today/addanalysistoday.png')
 
         mes = ''
         pos = 0
@@ -137,6 +130,6 @@ def analysis_month_add(message):
             mes += i + ' : +' + str(vals[pos]) + currencyes.currensyes['ru-ruble'] + '\n'
             pos += 1
 
-        with open('diagrams/month/addanalysismonth.png', 'rb') as diagram:
+        with open('diagrams/today/addanalysistoday.png', 'rb') as diagram:
             bot.send_photo(message.chat.id, diagram)
             bot.send_message(message.chat.id, mes)

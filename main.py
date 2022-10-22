@@ -7,6 +7,8 @@ from database.models import User, Transaction
 from currencyes import currensyes
 from multiprocessing import Process
 from analysismonth import analysis_month, analysis_month_rm, analysis_month_add
+from analysisyear import analysis_year, analysis_year_rm, analysis_year_add
+from analysistoday import analysis_today, analysis_today_rm, analysis_today_add
 
 
 # функция ограничения количества знаков после запятой
@@ -245,6 +247,18 @@ def main():
                 Process(target=analysis_month_rm, args=(message, )).start()
             elif message.text.split(' ')[0] == '/addanalysismonth':
                 Process(target=analysis_month_add, args=(message,)).start()
+            elif message.text.split(' ')[0] == '/analysisyear':
+                Process(target=analysis_year, args=(message, )).start()
+            elif message.text.split(' ')[0] == '/rmanalysisyear':
+                Process(target=analysis_year_rm, args=(message, )).start()
+            elif message.text.split(' ')[0] == '/addanalysisyear':
+                Process(target=analysis_year_add, args=(message, )).start()
+            elif message.text.split(' ')[0] == '/analysistoday':
+                Process(target=analysis_today, args=(message,)).start()
+            elif message.text.split(' ')[0] == '/rmanalysistoday':
+                Process(target=analysis_today_rm, args=(message,)).start()
+            elif message.text.split(' ')[0] == '/addanalysistoday':
+                Process(target=analysis_today_add, args=(message,)).start()
             else:
                 mes = None
                 if locales.LOCALE == 'ru':
