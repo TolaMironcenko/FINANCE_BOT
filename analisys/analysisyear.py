@@ -3,7 +3,7 @@ from database.models import Transaction, User
 import locales
 import matplotlib.pyplot as plt
 import datetime
-from analysismonth import have_in_vals
+from analisys.analysismonth import have_in_vals
 import currencyes
 
 

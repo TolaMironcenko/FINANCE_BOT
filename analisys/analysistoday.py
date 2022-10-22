@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import locales
 import datetime
 import currencyes
-from analysismonth import have_in_vals
+from analisys.analysismonth import have_in_vals
 
 
 def analysis_today(message):

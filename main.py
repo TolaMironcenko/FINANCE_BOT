@@ -6,9 +6,9 @@ from changelocale import change_locale
 from database.models import User, Transaction
 from currencyes import currensyes
 from multiprocessing import Process
-from analysismonth import analysis_month, analysis_month_rm, analysis_month_add
-from analysisyear import analysis_year, analysis_year_rm, analysis_year_add
-from analysistoday import analysis_today, analysis_today_rm, analysis_today_add
+from analisys.analysismonth import analysis_month, analysis_month_rm, analysis_month_add
+from analisys.analysisyear import analysis_year, analysis_year_rm, analysis_year_add
+from analisys.analysistoday import analysis_today, analysis_today_rm, analysis_today_add
 
 
 # функция ограничения количества знаков после запятой
