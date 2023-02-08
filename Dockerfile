@@ -14,8 +14,9 @@ RUN apk add --no-cache tesseract-ocr python3 py3-numpy && \
 
 RUN pip3 install -r requirements.txt --no-cache-dir
 
+COPY entrypoint.sh /app
+RUN chmod +x /app/entrypoint.sh
+
 COPY . /app
 
-ENTRYPOINT ["python3"]
-
-CMD ["main.py"]
+ENTRYPOINT ["/app/entrypoint.sh"]

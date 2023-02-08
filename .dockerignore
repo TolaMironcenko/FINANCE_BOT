@@ -2,3 +2,4 @@
 Dockerfile
 .gitignore
 .idea
+database.sqlite
