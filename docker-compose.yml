@@ -2,6 +2,7 @@ version: "3.11"
 
 services:
   bot:
+    container_name: finance_bot
     build: .
     command: python main.py
     restart: always
